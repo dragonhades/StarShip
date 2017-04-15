@@ -16,14 +16,23 @@
 #include "tools.h"
 #include "cursor.h"
 
-TriangleShip::TriangleShip(Triangle *triangle, QGraphicsView *view):view{view}{
-    tri = triangle;
-    center = triangle->scenePos();
-    head = QLineF(center, triangle->get_head());
+TriangleShip::TriangleShip(QGraphicsView *view):view{view}{
+}
+
+void TriangleShip::addComponents(Triangle *triangle){
+    if(!tri) {
+        tri = triangle;
+        center = triangle->scenePos();
+        head = QLineF(center, triangle->get_head());
+    }
+    scene()->addItem(triangle);
+    if(!group) group = new QGraphicsItemGroup();
+    //group->addToGroup(triangle);
+    matrix = new QRectF(group->boundingRect());
+    if(scene()!=0) scene()->addRect(*matrix);
 }
 
 void TriangleShip::move(){
-    tri->setPos(tri->scenePos());
     qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), view->mapFromGlobal(view->cursor().pos()));
     tri->setPos(tri->scenePos().x()-(head.dy()/5*current_speed), tri->scenePos().y()-(head.dx()/5*current_speed));
     qreal current_A = tri->rotation();
@@ -104,5 +113,4 @@ void TriangleShip::advance(int phase){
         break;
     }
     move();
-    scene()->translate(scenePos().x(),scenePos().y());
 }

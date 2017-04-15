@@ -1,6 +1,8 @@
 #include "triangle.h"
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QGraphicsPolygonItem>
+#include <QGraphicsScene>
 #include <QApplication>
 #include <QDebug>
 #include <QPoint>
@@ -9,11 +11,9 @@
 #include <QVector>
 #include <QPolygonF>
 
-Triangle::Triangle(const QPointF &pos, const QPointF &pt1, const QPointF &pt2, const QPointF &pt3){
+Triangle::Triangle(const QPointF &pos, const QVector<QPointF> &arr){
     setPos(pos);
-    points.push_back(pt1);
-    points.push_back(pt2);
-    points.push_back(pt3);
+    points = arr;
     draw();
 }
 

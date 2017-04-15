@@ -10,6 +10,8 @@ class QLineF;
 class TriangleShip : public QObject, public QGraphicsPolygonItem {
     Q_OBJECT
     Triangle *tri=nullptr;
+    QRectF * matrix=nullptr;
+    QGraphicsItemGroup *group=nullptr;
     QPointF center;
     QLineF head;
     qreal max_speed=0.5;
@@ -20,7 +22,8 @@ class TriangleShip : public QObject, public QGraphicsPolygonItem {
     QGraphicsView *view=nullptr;
     void move();
 public:
-    TriangleShip(Triangle *triangle, QGraphicsView *view);
+    TriangleShip(QGraphicsView *view);
+    void addComponents(Triangle *triangle);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
     void increaseSpeed(const qreal &speed);
