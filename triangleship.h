@@ -9,13 +9,11 @@ class QLineF;
 
 class TriangleShip : public QObject, public QGraphicsPolygonItem {
     Q_OBJECT
-    Triangle *tri=nullptr;
-    QRectF * matrix=nullptr;
-    QGraphicsItemGroup *group=nullptr;
+    QGraphicsItemGroup *tri=nullptr;
     QPointF center;
     QLineF head;
     qreal max_speed=0.5;
-    qreal rotate_speed=1;
+    qreal rotate_speed=0.5;
     qreal current_speed=0;
     enum STATE { STOP, SPEEDUP, SLOWDOWN };
     STATE engineState=STATE::STOP;

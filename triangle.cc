@@ -24,7 +24,7 @@ QPointF Triangle::get_head(){
 void Triangle::draw(){
     QPolygonF poly(points);
     QPen pen;
-    pen.setWidth(3);
+    pen.setWidth(4);
     setPen(pen);
     setPolygon(poly);
 }
