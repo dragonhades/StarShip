@@ -31,29 +31,51 @@ int main(int argc, char *argv[]){
 
     Cursor * cursor = new Cursor(view);
     QPointF p(0, 0);
-    QPointF p1(p.x()+0, p.y()-20);
-    QPointF p2(p.x()-10, p.y()+20);
-    QPointF p3(p.x()+10, p.y()+20);
-    Triangle * triangle = new Triangle(p, p1, p2, p3);
-    TriangleShip * ship = new TriangleShip(triangle,view);
-    // add the item to the scene
-    scene->addItem(triangle);
+    QVector<QPointF> points;
+    points.push_back(QPointF(p.x()+0, p.y()-20));
+    points.push_back(QPointF(p.x()-10, p.y()+15));
+    points.push_back(QPointF(p.x()+10, p.y()+15));
+    Triangle * triangle = new Triangle(p, points);
+    points.clear();
+    points.push_back(QPointF(p.x()-10, p.y()+90));
+    points.push_back(QPointF(p.x()-10, p.y()+15));
+    points.push_back(QPointF(p.x()+10, p.y()+15));
+    points.push_back(QPointF(p.x()+10, p.y()+90));
+    Triangle * rect = new Triangle(p, points);
+    points.clear();
+    points.push_back(QPointF(p.x()-10, p.y()+35));
+    points.push_back(QPointF(p.x()-10, p.y()+75));
+    points.push_back(QPointF(p.x()-50, p.y()+75));
+    Triangle * leftTri = new Triangle(p, points);
+    points.clear();
+    points.push_back(QPointF(p.x()+10, p.y()+35));
+    points.push_back(QPointF(p.x()+10, p.y()+75));
+    points.push_back(QPointF(p.x()+50, p.y()+75));
+    Triangle * rightTri = new Triangle(p, points);
+    TriangleShip * ship = new TriangleShip(view);
+    //cene->addItem(triangle);
+    //scene->addItem(rect);
     scene->addItem(ship);
+    ship->addComponents(triangle);
+    ship->addComponents(rect);
+    ship->addComponents(leftTri);
+    ship->addComponents(rightTri);
+    // add the item to the scene
     scene->addItem(exit_button);    // add the item to the scene
-    //scene->addItem(&item);
     scene->addItem(cursor);
     // make rect focusable
     ship->setFlag(QGraphicsItem::ItemIsFocusable);
     triangle->setFlag(QGraphicsItem::ItemIsFocusable);
-    //triangle->setFocus();
-    exit_button->setFlag(QGraphicsItem::ItemIsFocusable);
+    triangle->setFocus();
+    //exit_button->setFlag(QGraphicsItem::ItemIsFocusable);
     ship->setFocus();
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //view->showFullScreen();
+
     view->show();
     view->setFixedSize(1280,720);
-    scene->setSceneRect(0,0,desktopWidth,desktopHeight);
+    scene->setSceneRect(0,0,desktopWidth+5000,desktopHeight+5000);
 
     return a.exec();
 }

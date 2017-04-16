@@ -28,7 +28,8 @@ SOURCES += main.cc\
     cursor.cc \
     triangle.cc \
     triangleship.cc \
-    constants.cc
+    constants.cc \
+    bullet.cc
 
 HEADERS  += \
     exit.h \
@@ -36,6 +37,7 @@ HEADERS  += \
     triangle.h \
     triangleship.h \
     constants.h \
-    tools.h
+    tools.h \
+    bullet.h
 
 FORMS    += mainwindow.ui

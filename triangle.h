@@ -10,7 +10,7 @@
 class Triangle : public QGraphicsPolygonItem {
     QVector<QPointF> points;
 public:
-    Triangle(const QPointF &pos, const QPointF &pt1, const QPointF &pt2, const QPointF &pt3);
+    Triangle(const QPointF &pos, const QVector<QPointF> &points);
     QPointF get_head();
     void draw();
     virtual ~Triangle(){}

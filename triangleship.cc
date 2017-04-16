@@ -11,23 +11,42 @@
 #include <QPointF>
 #include <QLineF>
 #include <QWidget>
+#include <QtMath>
 #include "constants.h"
 #include "triangle.h"
 #include "tools.h"
 #include "cursor.h"
+#include "bullet.h"
 
-TriangleShip::TriangleShip(Triangle *triangle, QGraphicsView *view):view{view}{
-    tri = triangle;
-    center = triangle->scenePos();
-    head = QLineF(center, triangle->get_head());
+TriangleShip::TriangleShip(QGraphicsView *view):view{view}{
+}
+
+void TriangleShip::addComponents(Triangle *triangle){
+    if(!tri) {
+        tri = new QGraphicsItemGroup();
+        head = QLineF(triangle->scenePos(), triangle->get_head());
+        scene()->addItem(tri);
+    }
+
+    //scene()->addItem(triangle);
+    //if(!group) group = new QGraphicsItemGroup();
+    tri->addToGroup(triangle);
+    scene()->addItem(triangle);
+    QRectF matrix = tri->boundingRect();
+    center = matrix.center();
+    //head = QLineF(tri->scenePos(), head.p2());
+    scene()->addRect(matrix);
+    //group->addToGroup(matrix);
 }
 
 void TriangleShip::move(){
-    tri->setPos(tri->scenePos());
+    //qDebug() <<center.x() <<" "<<center.y();
+    //center = tri->boundingRect().center();
     qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), view->mapFromGlobal(view->cursor().pos()));
-    tri->setPos(tri->scenePos().x()-(head.dy()/5*current_speed), tri->scenePos().y()-(head.dx()/5*current_speed));
-    qreal current_A = tri->rotation();
-    if((current_A>=0&&AGLcenterCursor>=0) || (current_A<0&&AGLcenterCursor<0)){
+    current_A = tri->rotation();
+    if(abs(current_A-AGLcenterCursor)<rotate_speed){
+    }
+    else if((current_A>=0&&AGLcenterCursor>=0) || (current_A<0&&AGLcenterCursor<0)){
         if(current_A>AGLcenterCursor){
             current_A-=rotate_speed;
         }
@@ -52,13 +71,51 @@ void TriangleShip::move(){
         }
     }
     //qDebug() << AGLcenterCursor;
-    tri->setRotation(current_A);
+    QPointF offset = tri->sceneBoundingRect().center();
+    QTransform transform;
+    transform.translate(offset.x(),offset.y());
+    transform.rotate(current_A);
+    //qDebug() << head.dy()<<head.dx()<<current_speed;
+    transform.translate(-offset.x(),-offset.y());
+    tri->setTransformOriginPoint(tri->boundingRect().center());
+    tri->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
+    //transform.reset();
+    //transform.translate(offset.x()+head.dy()/5*current_speed,offset.y()+head.dx()/5*current_speed);
+    //tri->setTransform(transform);
     head.setAngle(current_A);
+    tri->setPos(tri->pos().x()-head.dy()/5*current_speed, tri->pos().y()-head.dx()/5*current_speed);
+    //tri->setPos(transform.m31(),transform.m32());
+    //tri->setPos(center);
 }
 
 void TriangleShip::moveView(){
 
 }
+
+void TriangleShip::fire(){
+    QPointF p1 = tri->scenePos();
+    QPointF p2(tri->scenePos().x()+10,tri->scenePos().y()+60);
+    QRectF rect(p1,p2);
+    auto bullet = new QGraphicsEllipseItem(rect);
+    //bullet->setStartAngle(current_A);
+    //bullet->setTransformOriginPoint(bullet->sceneBoundingRect().center());
+    //bullet->setRotation(current_A);
+    scene()->addItem(bullet);
+    QPointF offset = bullet->sceneBoundingRect().center();
+    QTransform transform;
+    transform.translate(offset.x(),offset.y());
+    transform.rotate(current_A);
+    transform.translate(-offset.x(),-offset.y());
+    bullet->setTransformOriginPoint(bullet->boundingRect().center());
+    bullet->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
+
+    Bullet *b = new Bullet(bullet,head);
+
+    //b->setTransformOriginPoint(b->sceneBoundingRect().center());
+    //b->setRotation(head.angle());
+    scene()->addItem(b);
+}
+
 
 void TriangleShip::increaseSpeed(const qreal &speed){
     if(current_speed<max_speed) current_speed += speed;
@@ -79,6 +136,9 @@ void TriangleShip::keyPressEvent(QKeyEvent *event){
     }
     else if(event->key()==Qt::Key_S){
         engineState = STATE::SLOWDOWN;
+    }
+    if(event->key()==Qt::Key_Space){
+        fire();
     }
 }
 
@@ -104,5 +164,4 @@ void TriangleShip::advance(int phase){
         break;
     }
     move();
-    scene()->translate(scenePos().x(),scenePos().y());
 }
