@@ -15,6 +15,7 @@ class TriangleShip : public QObject, public QGraphicsPolygonItem {
     qreal max_speed=0.5;
     qreal rotate_speed=0.5;
     qreal current_speed=0;
+    qreal current_A=0;
     enum STATE { STOP, SPEEDUP, SLOWDOWN };
     STATE engineState=STATE::STOP;
     QGraphicsView *view=nullptr;
@@ -28,6 +29,7 @@ public:
     void decreaseSpeed(const qreal &speed);
     void setMaxSpeed(const qreal &s);
     void moveView();
+    void fire();
 protected:
     void advance(int phase);
 };
