@@ -1,14 +1,15 @@
 #ifndef EXIT_H
 #define EXIT_H
 
-#include <QGraphicsRectItem>
+#include <QWidget>
 #include <QApplication>
+#include <QGraphicsView>
 
-class Exit : public QGraphicsRectItem {
-    QApplication *a;
+class Exit : public QWidget {
+    QGraphicsView *view=0;
 public:
-    Exit(QApplication *a);
-    void keyPressEvent(QKeyEvent *event);
+    Exit(QGraphicsView *view);
+    void makeButton();
 };
 
 #endif // EXIT_H

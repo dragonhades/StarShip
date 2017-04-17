@@ -30,7 +30,8 @@ SOURCES += main.cc\
     triangleship.cc \
     constants.cc \
     bullet.cc \
-    tools.cc
+    tools.cc \
+    myapplication.cc
 
 HEADERS  += \
     exit.h \
@@ -39,6 +40,7 @@ HEADERS  += \
     triangleship.h \
     constants.h \
     bullet.h \
-    tools.h
+    tools.h \
+    myapplication.h
 
 FORMS    += mainwindow.ui

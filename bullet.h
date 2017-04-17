@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QAbstractGraphicsShapeItem>
 #include <QGraphicsPolygonItem>
+#include "constants.h"
 class QAbstractGraphicsShapeItem;
 class QGraphicsView;
 
@@ -14,8 +15,12 @@ class Bullet : public QObject, public QGraphicsSimpleTextItem {
     QLineF head;
     QGraphicsView *view=0;
     qreal speed=0.7;
+    void move();
+    STATE state;
 public:
     Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir, QGraphicsView *view);
+public slots:
+    void keyPress();
 protected:
     void advance(int phase);
 };

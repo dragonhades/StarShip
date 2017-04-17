@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsSimpleTextItem>
+#include <QKeyEvent>
 #include <QDebug>
 #include <QTimer>
 #include <QTransform>
@@ -12,15 +13,22 @@
 #include <QWidget>
 #include <QtMath>
 #include "tools.h"
+#include "constants.h"
 
 Bullet::Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir, QGraphicsView *view):
     bullet{bullet},head{dir},view{view}{
     bullet->setRotation(head.angle());
 }
 
+void Bullet::move(){
+    bullet->setPos(bullet->scenePos().x()-head.dy()/5*speed, bullet->scenePos().y()-head.dx()/5*speed);
+}
+
 void Bullet::advance(int phase){
     if(!phase) return;
-    bullet->setPos(bullet->scenePos().x()-head.dy()/5*speed, bullet->scenePos().y()-head.dx()/5*speed);
+
+    if(state == PAUSE) return;
+    else move();
 
     QPointF p = bullet->scenePos();
     setPos(p.x()+15, p.y()-15);
@@ -37,4 +45,10 @@ void Bullet::advance(int phase){
         scene()->removeItem(this);
         delete this;
     }
+}
+
+void Bullet::keyPress(){
+    qDebug()<<42;
+    if(state==STATE::PAUSE) state = STATE::STOP;
+    else state = STATE::PAUSE;
 }

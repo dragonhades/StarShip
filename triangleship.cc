@@ -36,6 +36,7 @@ void TriangleShip::addComponents(Triangle *triangle){
 }
 
 void TriangleShip::move(){
+    if(engineState==PAUSE) return;
     QPointF cursor = view->mapFromGlobal(view->cursor().pos());
     qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), cursor);
     current_A = tri->rotation();
@@ -73,8 +74,8 @@ void TriangleShip::move(){
     tri->setTransformOriginPoint(tri->boundingRect().center());
     tri->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
     head.setAngle(current_A);
-    if((offset.x()>=cursor.x()-150 && offset.y()>=cursor.y()-150) &&
-       (offset.x()<=cursor.x()+150 && offset.y()<=cursor.y()+150)) {
+    if((offset.x()>=cursor.x()-170 && offset.y()>=cursor.y()-170) &&
+       (offset.x()<=cursor.x()+170 && offset.y()<=cursor.y()+170)) {
         decreaseSpeed(decelaration*2);
     } else {
         increaseSpeed(accelaration);
@@ -101,6 +102,7 @@ void TriangleShip::fire(){
         scene()->addItem(bullet);
         Bullet *b = new Bullet(bullet,head,view);
         scene()->addItem(b);
+        connect(this,SIGNAL(keyPress()),b,SLOT(keyPress()));
     }
 }
 
@@ -156,26 +158,45 @@ void TriangleShip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
 }
 
 void TriangleShip::keyPressEvent(QKeyEvent *event){
-    if(event->key()==Qt::Key_W){
+    switch(event->key()){
+    case Qt::Key_W:
         engineState = SPEEDUP;
-    }
-    else if(event->key()==Qt::Key_S){
+        break;
+    case Qt::Key_S:
         engineState = SLOWDOWN;
-    }
-    if(event->key()==Qt::Key_Space){
-        weaponState = FIRE;
+        break;
+    case Qt::Key_Space:
+        if(weaponState!=PAUSE) weaponState = FIRE;
+        break;
+    case Qt::Key_Escape:
+        keyPress();
+        if(engineState==PAUSE) {
+            engineState = STOP;
+            weaponState = STOP;
+        }
+        else {
+            engineState = PAUSE;
+            weaponState = PAUSE;
+        }
+        break;
+    default:
+        break;
     }
 }
 
 void TriangleShip::keyReleaseEvent(QKeyEvent *event){
-    if(event->key()==Qt::Key_W){
+    switch(event->key()){
+    case Qt::Key_W:
         engineState = STOP;
-    }
-    else if(event->key()==Qt::Key_S){
+        break;
+    case Qt::Key_S:
         engineState = STOP;
-    }
-    else if(event->key()==Qt::Key_Space){
-        weaponState = STOP;
+        break;
+    case Qt::Key_Space:
+        if(weaponState!=PAUSE) weaponState = STOP;
+        break;
+    default:
+        break;
     }
 }
 
