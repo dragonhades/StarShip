@@ -6,14 +6,16 @@
 #include <QAbstractGraphicsShapeItem>
 #include <QGraphicsPolygonItem>
 class QAbstractGraphicsShapeItem;
+class QGraphicsView;
 
-class Bullet : public QObject, public QGraphicsPolygonItem {
+class Bullet : public QObject, public QGraphicsSimpleTextItem {
     Q_OBJECT
     QAbstractGraphicsShapeItem *bullet=nullptr;
     QLineF head;
-    qreal speed=0.3;
+    QGraphicsView *view=0;
+    qreal speed=0.7;
 public:
-    Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir);
+    Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir, QGraphicsView *view);
 protected:
     void advance(int phase);
 };

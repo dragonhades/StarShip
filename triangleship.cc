@@ -5,6 +5,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QGraphicsSimpleTextItem>
 #include <QDebug>
 #include <QTimer>
 #include <QTransform>
@@ -40,8 +41,7 @@ void TriangleShip::addComponents(Triangle *triangle){
 }
 
 void TriangleShip::move(){
-    //qDebug() <<center.x() <<" "<<center.y();
-    //center = tri->boundingRect().center();
+
     qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), view->mapFromGlobal(view->cursor().pos()));
     current_A = tri->rotation();
     if(abs(current_A-AGLcenterCursor)<rotate_speed){
@@ -70,50 +70,28 @@ void TriangleShip::move(){
             }
         }
     }
-    //qDebug() << AGLcenterCursor;
     QPointF offset = tri->sceneBoundingRect().center();
     QTransform transform;
     transform.translate(offset.x(),offset.y());
     transform.rotate(current_A);
-    //qDebug() << head.dy()<<head.dx()<<current_speed;
     transform.translate(-offset.x(),-offset.y());
     tri->setTransformOriginPoint(tri->boundingRect().center());
     tri->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
-    //transform.reset();
-    //transform.translate(offset.x()+head.dy()/5*current_speed,offset.y()+head.dx()/5*current_speed);
-    //tri->setTransform(transform);
     head.setAngle(current_A);
     tri->setPos(tri->pos().x()-head.dy()/5*current_speed, tri->pos().y()-head.dx()/5*current_speed);
-    //tri->setPos(transform.m31(),transform.m32());
-    //tri->setPos(center);
-}
-
-void TriangleShip::moveView(){
-
 }
 
 void TriangleShip::fire(){
-    QPointF p1 = tri->scenePos();
-    QPointF p2(tri->scenePos().x()+10,tri->scenePos().y()+60);
+    if(canFire()){
+    QPointF p1(-4,-30);
+    QPointF p2(4,30);
     QRectF rect(p1,p2);
     auto bullet = new QGraphicsEllipseItem(rect);
-    //bullet->setStartAngle(current_A);
-    //bullet->setTransformOriginPoint(bullet->sceneBoundingRect().center());
-    //bullet->setRotation(current_A);
+    bullet->setPos(tri->pos());
     scene()->addItem(bullet);
-    QPointF offset = bullet->sceneBoundingRect().center();
-    QTransform transform;
-    transform.translate(offset.x(),offset.y());
-    transform.rotate(current_A);
-    transform.translate(-offset.x(),-offset.y());
-    bullet->setTransformOriginPoint(bullet->boundingRect().center());
-    bullet->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
-
-    Bullet *b = new Bullet(bullet,head);
-
-    //b->setTransformOriginPoint(b->sceneBoundingRect().center());
-    //b->setRotation(head.angle());
+    Bullet *b = new Bullet(bullet,head,view);
     scene()->addItem(b);
+    }
 }
 
 
@@ -128,6 +106,15 @@ void TriangleShip::decreaseSpeed(const qreal &speed){
 
 void TriangleShip::setMaxSpeed(const qreal &s){
     max_speed = s;
+}
+
+bool TriangleShip::canFire() {
+    static int x = fire_rate;
+    x++;
+    if(x >= fire_rate) {
+        x = 0;
+        return true;
+    } else return false;
 }
 
 void TriangleShip::keyPressEvent(QKeyEvent *event){
@@ -164,4 +151,11 @@ void TriangleShip::advance(int phase){
         break;
     }
     move();
+    //view->ensureVisible(tri->boundingRect());
+    QPointF p = tri->pos();
+    setPos(p.x()+15, p.y()-15);
+    int x = p.x();
+    int y = p.y();
+    QString qs;
+    setText(qs.fromStdString("x: "+std::to_string(x)+"   y: "+std::to_string(y)));
 }

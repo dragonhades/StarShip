@@ -3,6 +3,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsView>
 #include <QGraphicsScene>
+#include <QGraphicsSimpleTextItem>
 #include <QDebug>
 #include <QTimer>
 #include <QTransform>
@@ -10,25 +11,31 @@
 #include <QLineF>
 #include <QWidget>
 #include <QtMath>
+#include "tools.h"
 
-Bullet::Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir):bullet{bullet},head{dir}{
-    //bullet->setTransformOriginPoint(bullet->sceneBoundingRect().center());
-    //bullet->setRotation(head.angle());
-    //bullet->setPos(bullet->sceneBoundingRect().center());
+Bullet::Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir, QGraphicsView *view):
+    bullet{bullet},head{dir},view{view}{
+    bullet->setRotation(head.angle());
 }
 
 void Bullet::advance(int phase){
     if(!phase) return;
-    /*
-    QPointF offset = bullet->sceneBoundingRect().center();
-    QTransform transform;
-    transform.translate(offset.x(),offset.y());
-    transform.rotate(head.angle());
-    transform.translate(-offset.x(),-offset.y());
-    bullet->setTransformOriginPoint(bullet->boundingRect().center());
-    bullet->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
-    bullet->setTransformOriginPoint(bullet->boundingRect().center());
-    bullet->setRotation(head.angle());
-*/
-bullet->setPos(bullet->scenePos().x()-head.dy()/5*speed, bullet->scenePos().y()-head.dx()/5*speed);
+
+    bullet->setPos(bullet->scenePos().x()-head.dy()/5*speed, bullet->scenePos().y()-head.dx()/5*speed);
+
+    QPointF p = bullet->scenePos();
+    setPos(p.x()+15, p.y()-15);
+    int x = p.x();
+    int y = p.y();
+    QString qs;
+    setText(qs.fromStdString("x: "+std::to_string(x)+"   y: "+std::to_string(y)));
+
+    if(bullet->pos().y()+bullet->boundingRect().height()<0||
+       bullet->pos().y()-bullet->boundingRect().height()>view->frameRect().height()||
+       bullet->pos().x()+bullet->boundingRect().width()<0||
+       bullet->pos().x()-bullet->boundingRect().width()>view->frameRect().width()){
+        scene()->removeItem(bullet);
+        scene()->removeItem(this);
+        delete this;
+    }
 }
