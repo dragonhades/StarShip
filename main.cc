@@ -33,9 +33,9 @@ int main(int argc, char *argv[]){
     QTimer * timer = new QTimer;
     QObject::connect(timer,SIGNAL(timeout()),scene,SLOT(advance()));
     timer->start(timer_start);
-    view->frameRect().setRect(0,0,0,0);
-    auto frame = new QGraphicsRectItem(view->frameRect());
-    scene->addItem(frame);
+    //view->frameRect().setRect(0,0,0,0);
+    //auto frame = new QGraphicsRectItem(view->frameRect());
+    //scene->addItem(frame);
 
     Cursor * cursor = new Cursor(view);
     QPointF p(0, 0);

@@ -20,7 +20,6 @@ Bullet::Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir, QGraphicsV
 
 void Bullet::advance(int phase){
     if(!phase) return;
-
     bullet->setPos(bullet->scenePos().x()-head.dy()/5*speed, bullet->scenePos().y()-head.dx()/5*speed);
 
     QPointF p = bullet->scenePos();

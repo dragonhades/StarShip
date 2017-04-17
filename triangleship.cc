@@ -1,6 +1,7 @@
 #include "triangleship.h"
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QGraphicsSceneMouseEvent>
 #include <QApplication>
 #include <QGraphicsItem>
 #include <QGraphicsView>
@@ -28,21 +29,15 @@ void TriangleShip::addComponents(Triangle *triangle){
         head = QLineF(triangle->scenePos(), triangle->get_head());
         scene()->addItem(tri);
     }
-
-    //scene()->addItem(triangle);
-    //if(!group) group = new QGraphicsItemGroup();
     tri->addToGroup(triangle);
-    scene()->addItem(triangle);
     QRectF matrix = tri->boundingRect();
     center = matrix.center();
-    //head = QLineF(tri->scenePos(), head.p2());
     scene()->addRect(matrix);
-    //group->addToGroup(matrix);
 }
 
 void TriangleShip::move(){
-
-    qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), view->mapFromGlobal(view->cursor().pos()));
+    QPointF cursor = view->mapFromGlobal(view->cursor().pos());
+    qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), cursor);
     current_A = tri->rotation();
     if(abs(current_A-AGLcenterCursor)<rotate_speed){
     }
@@ -78,19 +73,34 @@ void TriangleShip::move(){
     tri->setTransformOriginPoint(tri->boundingRect().center());
     tri->setRotation(qRadiansToDegrees(qAtan2(transform.m12(), transform.m11())));
     head.setAngle(current_A);
+    if((offset.x()>=cursor.x()-150 && offset.y()>=cursor.y()-150) &&
+       (offset.x()<=cursor.x()+150 && offset.y()<=cursor.y()+150)) {
+        decreaseSpeed(decelaration*2);
+    } else {
+        increaseSpeed(accelaration);
+    }
     tri->setPos(tri->pos().x()-head.dy()/5*current_speed, tri->pos().y()-head.dx()/5*current_speed);
 }
 
 void TriangleShip::fire(){
-    if(canFire()){
-    QPointF p1(-4,-30);
-    QPointF p2(4,30);
-    QRectF rect(p1,p2);
-    auto bullet = new QGraphicsEllipseItem(rect);
-    bullet->setPos(tri->pos());
-    scene()->addItem(bullet);
-    Bullet *b = new Bullet(bullet,head,view);
-    scene()->addItem(b);
+    fire_rate_acc++;
+    if(fire_rate_acc>=fire_rate){
+        fire_rate_acc=0;
+        QPointF p1(-4,-30);
+        QPointF p2(4,30);
+        QRectF rect(p1,p2);
+        auto bullet = new QGraphicsEllipseItem(rect);
+        bullet->setPos(tri->pos());
+        QPen pen;
+        pen.setWidth(2);
+        bullet->setPen(pen);
+        QBrush brush;
+        brush.setColor(Qt::black);
+        brush.setStyle(Qt::SolidPattern);
+        bullet->setBrush(brush);
+        scene()->addItem(bullet);
+        Bullet *b = new Bullet(bullet,head,view);
+        scene()->addItem(b);
     }
 }
 
@@ -107,51 +117,88 @@ void TriangleShip::decreaseSpeed(const qreal &speed){
 void TriangleShip::setMaxSpeed(const qreal &s){
     max_speed = s;
 }
+/*
+bool TriangleShip::event(QEvent *e){
+    if(e->type()==QEvent::KeyPress){
+        if(e->type()==Qt::Key_W){
+            engineState = SPEEDUP;
+        }
+        else if(e->type()==Qt::Key_S){
+            engineState = SLOWDOWN;
+        }
+        if(e->type()==Qt::Key_Space){
+            weaponState = FIRE;
+        }
+    }
+    if(e->type()==QEvent::KeyRelease){
+        if(e->type()==Qt::Key_W){
+            engineState = STOP;
+        }
+        else if(e->type()==Qt::Key_S){
+            engineState = STOP;
+        }
+        else if(e->type()==Qt::Key_Space){
+            weaponState = STOP;
+        }
+    }
+}
+*/
+void TriangleShip::mousePressEvent(QGraphicsSceneMouseEvent *event){
+    //if(event->button()==Qt::LeftButton){
+        //weaponState = FIRE;
+    //}
+}
 
-bool TriangleShip::canFire() {
-    static int x = fire_rate;
-    x++;
-    if(x >= fire_rate) {
-        x = 0;
-        return true;
-    } else return false;
+void TriangleShip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
+    //if(event->button()==Qt::LeftButton){
+        //weaponState = STOP;
+    //}
 }
 
 void TriangleShip::keyPressEvent(QKeyEvent *event){
     if(event->key()==Qt::Key_W){
-        engineState = STATE::SPEEDUP;
+        engineState = SPEEDUP;
     }
     else if(event->key()==Qt::Key_S){
-        engineState = STATE::SLOWDOWN;
+        engineState = SLOWDOWN;
     }
     if(event->key()==Qt::Key_Space){
-        fire();
+        weaponState = FIRE;
     }
 }
 
 void TriangleShip::keyReleaseEvent(QKeyEvent *event){
     if(event->key()==Qt::Key_W){
-        engineState = STATE::STOP;
+        engineState = STOP;
     }
     else if(event->key()==Qt::Key_S){
-        engineState = STATE::STOP;
+        engineState = STOP;
+    }
+    else if(event->key()==Qt::Key_Space){
+        weaponState = STOP;
     }
 }
 
 void TriangleShip::advance(int phase){
     if(!phase) return;
     switch (engineState) {
-    case STATE::SPEEDUP :
-        increaseSpeed(0.0012);
+    case SPEEDUP :
+        increaseSpeed(accelaration);
         break;
-    case STATE::SLOWDOWN :
-        decreaseSpeed(0.0008);
+    case SLOWDOWN :
+        decreaseSpeed(decelaration);
+        break;
+    default:
+        break;
+    }
+    switch (weaponState) {
+    case FIRE:
+        fire();
         break;
     default:
         break;
     }
     move();
-    //view->ensureVisible(tri->boundingRect());
     QPointF p = tri->pos();
     setPos(p.x()+15, p.y()-15);
     int x = p.x();
