@@ -9,6 +9,7 @@
 #include <QPoint>
 #include <QDebug>
 #include <QTimer>
+#include <QPushButton>
 #include "exit.h"
 #include "cursor.h"
 #include "triangle.h"
@@ -21,14 +22,13 @@ int main(int argc, char *argv[]){
     int desktopWidth=a.desktop()->screenGeometry().width();
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = new QGraphicsView(scene);
-
     view->showFullScreen();
     scene->setSceneRect(0,0,desktopWidth,desktopHeight);
     view->setFixedSize(desktopWidth,desktopHeight);
     view->show();
-    // create an item to put into the scene
-    Exit * exit_button = new Exit(&a);
-    exit_button->setRect(1180, 0 ,100,100);
+
+    Exit * exit = new Exit(view);
+    scene->addWidget(exit);
 
     QTimer * timer = new QTimer;
     QObject::connect(timer,SIGNAL(timeout()),scene,SLOT(advance()));
@@ -64,12 +64,13 @@ int main(int argc, char *argv[]){
     //cene->addItem(triangle);
     //scene->addItem(rect);
     scene->addItem(ship);
+    //scene->addWidget(ship);
     ship->addComponents(triangle);
     ship->addComponents(rect);
     ship->addComponents(leftTri);
     ship->addComponents(rightTri);
     // add the item to the scene
-    scene->addItem(exit_button);    // add the item to the scene
+    //scene->addWidget(exit_button);    // add the item to the scene
     scene->addItem(cursor);
     // make rect focusable
     ship->QGraphicsSimpleTextItem::setFlag(QGraphicsItem::ItemIsFocusable);

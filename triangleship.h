@@ -9,7 +9,7 @@ class QPointF;
 class QGraphicsView;
 class QLineF;
 
-class TriangleShip :public QObject, public QGraphicsSimpleTextItem {
+class TriangleShip :public QWidget, public QGraphicsSimpleTextItem {
     Q_OBJECT
     QGraphicsItemGroup *tri=nullptr;
     QPointF center;

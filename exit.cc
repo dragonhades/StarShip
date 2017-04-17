@@ -1,15 +1,17 @@
 #include "exit.h"
-
-#include <QKeyEvent>
-#include <QApplication>
+#include <QWidget>
+#include <QPushButton>
+#include <QGraphicsView>
 #include <QDebug>
-#include <iostream>
 
-Exit::Exit(QApplication *a):a{a}{}
+Exit::Exit(QGraphicsView *view):view{view}{
+    resize(75,30);
+    move(view->frameRect().width()-75,0);
+    QPushButton *button = new QPushButton("quit",this);
+    button->setGeometry(0, 0, 75, 30);
+    connect(button, SIGNAL(clicked()), qApp, SLOT(quit()));
+}
 
-void Exit::keyPressEvent(QKeyEvent *event){
-    if(event->key()==Qt::Key_Escape){
-        setPos(x()+10, y());
-        a->quit();
-    }
+void Exit::makeButton(){
+
 }
