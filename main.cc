@@ -4,6 +4,8 @@
 #include <QGraphicsRectItem>
 #include <QGraphicsView>
 #include <QDesktopWidget>
+#include <QWidget>
+#include <QObject>
 #include <QPoint>
 #include <QDebug>
 #include <QTimer>
@@ -15,12 +17,15 @@
 
 int main(int argc, char *argv[]){
     QApplication a(argc, argv);
-
     int desktopHeight=a.desktop()->screenGeometry().height();
     int desktopWidth=a.desktop()->screenGeometry().width();
     QGraphicsScene * scene = new QGraphicsScene();
     QGraphicsView * view = new QGraphicsView(scene);
 
+    view->showFullScreen();
+    scene->setSceneRect(0,0,desktopWidth,desktopHeight);
+    view->setFixedSize(desktopWidth,desktopHeight);
+    view->show();
     // create an item to put into the scene
     Exit * exit_button = new Exit(&a);
     exit_button->setRect(1180, 0 ,100,100);
@@ -28,6 +33,9 @@ int main(int argc, char *argv[]){
     QTimer * timer = new QTimer;
     QObject::connect(timer,SIGNAL(timeout()),scene,SLOT(advance()));
     timer->start(timer_start);
+    //view->frameRect().setRect(0,0,0,0);
+    //auto frame = new QGraphicsRectItem(view->frameRect());
+    //scene->addItem(frame);
 
     Cursor * cursor = new Cursor(view);
     QPointF p(0, 0);
@@ -64,18 +72,15 @@ int main(int argc, char *argv[]){
     scene->addItem(exit_button);    // add the item to the scene
     scene->addItem(cursor);
     // make rect focusable
-    ship->setFlag(QGraphicsItem::ItemIsFocusable);
+    ship->QGraphicsSimpleTextItem::setFlag(QGraphicsItem::ItemIsFocusable);
     triangle->setFlag(QGraphicsItem::ItemIsFocusable);
     triangle->setFocus();
     //exit_button->setFlag(QGraphicsItem::ItemIsFocusable);
-    ship->setFocus();
+    ship->QGraphicsSimpleTextItem::setFocus();
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //view->showFullScreen();
 
-    view->show();
-    view->setFixedSize(1280,720);
-    scene->setSceneRect(0,0,desktopWidth+5000,desktopHeight+5000);
+    //ship->QWidget::show();
 
     return a.exec();
 }
