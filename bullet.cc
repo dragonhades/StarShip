@@ -48,7 +48,6 @@ void Bullet::advance(int phase){
 }
 
 void Bullet::keyPress(){
-    qDebug()<<42;
     if(state==STATE::PAUSE) state = STATE::STOP;
     else state = STATE::PAUSE;
 }

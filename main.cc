@@ -15,7 +15,7 @@
 #include "triangle.h"
 #include "triangleship.h"
 #include "constants.h"
-#include "myapplication.h"
+#include "Interface.h"
 
 int main(int argc, char *argv[]){
 
@@ -27,15 +27,11 @@ int main(int argc, char *argv[]){
     view->showFullScreen();
     scene->setSceneRect(0,0,desktopWidth,desktopHeight);
     view->setFixedSize(desktopWidth,desktopHeight);
-    view->show();
 
     QTimer * timer = new QTimer;
     QObject::connect(timer,SIGNAL(timeout()),scene,SLOT(advance()));
     timer->start(timer_start);
 
-    //view->frameRect().setRect(0,0,0,0);
-    //auto frame = new QGraphicsRectItem(view->frameRect());
-    //scene->addItem(frame);
     Cursor * cursor = new Cursor(view);
     scene->addItem(cursor);
 
@@ -64,7 +60,6 @@ int main(int argc, char *argv[]){
     TriangleShip * ship = new TriangleShip(view);
 
     scene->addItem(ship);
-    //scene->addWidget(ship);
     ship->addComponents(triangle);
     ship->addComponents(rect);
     ship->addComponents(leftTri);
@@ -72,13 +67,24 @@ int main(int argc, char *argv[]){
     ship->QGraphicsSimpleTextItem::setFlag(QGraphicsItem::ItemIsFocusable);
     ship->QGraphicsSimpleTextItem::setFocus();
 
-    Exit * exit = new Exit(view);
-    scene->addWidget(exit);
+    Interface *interface = new Interface(view);
+    scene->addItem(interface);
+    QObject::connect(ship,SIGNAL(keyPress()),interface,SLOT(notifiedExit()));
+    QObject::connect(interface,SIGNAL(notify()),ship,SLOT(notified()));
+
+    //Exit * exit = new Exit(view);
+    //scene->addWidget(exit);
+
+    /*
+    auto frame = new QGraphicsRectItem(view->frameRect());
+    scene->addItem(frame);
+    //view->translate(50,50);
+    auto frame2 = new QGraphicsRectItem(view->frameRect());
+    scene->addItem(frame2);
+    */
 
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    //ship->QWidget::show();
 
     return a.exec();
 }

@@ -17,6 +17,7 @@
 #include "constants.h"
 #include "triangle.h"
 #include "tools.h"
+#include "exit.h"
 #include "cursor.h"
 #include "bullet.h"
 
@@ -37,6 +38,7 @@ void TriangleShip::addComponents(Triangle *triangle){
 
 void TriangleShip::move(){
     if(engineState==PAUSE) return;
+
     QPointF cursor = view->mapFromGlobal(view->cursor().pos());
     qreal AGLcenterCursor = angle_x_to_y(tri->scenePos(), cursor);
     current_A = tri->rotation();
@@ -84,14 +86,15 @@ void TriangleShip::move(){
 }
 
 void TriangleShip::fire(){
-    fire_rate_acc++;
-    if(fire_rate_acc>=fire_rate){
+    fire_rate_acc+=fire_rate;
+    if(fire_rate_acc>=100){
         fire_rate_acc=0;
-        QPointF p1(-4,-30);
-        QPointF p2(4,30);
+        QPointF p1(-2,-40);
+        QPointF p2(2,40);
         QRectF rect(p1,p2);
         auto bullet = new QGraphicsEllipseItem(rect);
-        bullet->setPos(tri->pos());
+        bullet->setPos(tri->scenePos());
+        bullet->setPos(bullet->scenePos().x()-head.dy()*2.5, bullet->scenePos().y()-head.dx()*2.5);
         QPen pen;
         pen.setWidth(2);
         bullet->setPen(pen);
@@ -145,17 +148,19 @@ bool TriangleShip::event(QEvent *e){
     }
 }
 */
+
 void TriangleShip::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    //if(event->button()==Qt::LeftButton){
-        //weaponState = FIRE;
-    //}
+    if(event->button()==Qt::LeftButton){
+        weaponState = FIRE;
+    }
 }
 
 void TriangleShip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    //if(event->button()==Qt::LeftButton){
-        //weaponState = STOP;
-    //}
+    if(event->button()==Qt::LeftButton){
+        weaponState = STOP;
+    }
 }
+
 
 void TriangleShip::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
@@ -169,7 +174,7 @@ void TriangleShip::keyPressEvent(QKeyEvent *event){
         if(weaponState!=PAUSE) weaponState = FIRE;
         break;
     case Qt::Key_Escape:
-        keyPress();
+        qDebug() <<24;
         if(engineState==PAUSE) {
             engineState = STOP;
             weaponState = STOP;
@@ -177,6 +182,7 @@ void TriangleShip::keyPressEvent(QKeyEvent *event){
         else {
             engineState = PAUSE;
             weaponState = PAUSE;
+            keyPress();
         }
         break;
     default:
@@ -200,8 +206,16 @@ void TriangleShip::keyReleaseEvent(QKeyEvent *event){
     }
 }
 
+void TriangleShip::notified(){
+    qDebug()<<10000;
+    engineState = STOP;
+    weaponState = STOP;
+}
+
 void TriangleShip::advance(int phase){
     if(!phase) return;
+    if(engineState!=PAUSE) QGraphicsSimpleTextItem::setFocus();
+    //QGraphicsSimpleTextItem::setFocus();
     switch (engineState) {
     case SPEEDUP :
         increaseSpeed(accelaration);

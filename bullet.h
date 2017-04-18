@@ -14,7 +14,7 @@ class Bullet : public QObject, public QGraphicsSimpleTextItem {
     QAbstractGraphicsShapeItem *bullet=nullptr;
     QLineF head;
     QGraphicsView *view=0;
-    qreal speed=0.7;
+    qreal speed=0.8;
     void move();
     STATE state;
 public:

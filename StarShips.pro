@@ -31,7 +31,7 @@ SOURCES += main.cc\
     constants.cc \
     bullet.cc \
     tools.cc \
-    myapplication.cc
+    interface.cc
 
 HEADERS  += \
     exit.h \
@@ -41,6 +41,6 @@ HEADERS  += \
     constants.h \
     bullet.h \
     tools.h \
-    myapplication.h
+    Interface.h
 
 FORMS    += mainwindow.ui
