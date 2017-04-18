@@ -13,12 +13,14 @@ class Interface : public QWidget, public QGraphicsSimpleTextItem {
     QGraphicsView *view;
     Exit *exit=0;
 public:
-    Interface(QGraphicsView *view):view{view}{}
+    Interface(QGraphicsView *view);
     ~Interface(){}
     void keyPressEvent(QKeyEvent *event);
 signals:
     void notify();
 public slots:
     void notifiedExit();
+protected:
+    void advance(int phase);
 };
 #endif // MYAPPLICATION_H

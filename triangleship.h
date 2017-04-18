@@ -43,6 +43,7 @@ public:
     void fire();
 signals:
     void keyPress();
+    void notifyBullet();
 public slots:
     void notified();
 protected:

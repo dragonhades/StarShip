@@ -105,7 +105,7 @@ void TriangleShip::fire(){
         scene()->addItem(bullet);
         Bullet *b = new Bullet(bullet,head,view);
         scene()->addItem(b);
-        connect(this,SIGNAL(keyPress()),b,SLOT(keyPress()));
+        connect(this,SIGNAL(notifyBullet()),b,SLOT(keyPress()));
     }
 }
 
@@ -174,7 +174,6 @@ void TriangleShip::keyPressEvent(QKeyEvent *event){
         if(weaponState!=PAUSE) weaponState = FIRE;
         break;
     case Qt::Key_Escape:
-        qDebug() <<24;
         if(engineState==PAUSE) {
             engineState = STOP;
             weaponState = STOP;
@@ -182,6 +181,7 @@ void TriangleShip::keyPressEvent(QKeyEvent *event){
         else {
             engineState = PAUSE;
             weaponState = PAUSE;
+            notifyBullet();
             keyPress();
         }
         break;
@@ -207,15 +207,14 @@ void TriangleShip::keyReleaseEvent(QKeyEvent *event){
 }
 
 void TriangleShip::notified(){
-    qDebug()<<10000;
     engineState = STOP;
     weaponState = STOP;
+    notifyBullet();
 }
 
 void TriangleShip::advance(int phase){
     if(!phase) return;
     if(engineState!=PAUSE) QGraphicsSimpleTextItem::setFocus();
-    //QGraphicsSimpleTextItem::setFocus();
     switch (engineState) {
     case SPEEDUP :
         increaseSpeed(accelaration);
