@@ -2,14 +2,13 @@
 #define EXIT_H
 
 #include <QWidget>
-#include <QApplication>
+#include <QGraphicsSimpleTextItem>
 #include <QGraphicsView>
 
-class Exit : public QWidget {
+class Exit : public QWidget, public QGraphicsSimpleTextItem {
     QGraphicsView *view=0;
 public:
     Exit(QGraphicsView *view);
-    void makeButton();
 };
 
 #endif // EXIT_H

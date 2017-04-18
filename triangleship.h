@@ -15,14 +15,14 @@ class TriangleShip :public QWidget, public QGraphicsSimpleTextItem {
     QGraphicsItemGroup *tri=nullptr;
     QPointF center;
     QLineF head;
-    qreal max_speed=0.5;
+    qreal max_speed=0.6;
     qreal rotate_speed=0.5;
-    int fire_rate=100;
-    int fire_rate_acc=fire_rate;
+    int fire_rate=1;
+    int fire_rate_acc=100;
     qreal current_speed=0;
     qreal current_A=0;
     qreal accelaration=0.0012;
-    qreal decelaration=0.0008;
+    qreal decelaration=0.0009;
     STATE engineState=STATE::STOP;
     STATE weaponState=STATE::STOP;
     QGraphicsView *view=nullptr;
@@ -43,6 +43,8 @@ public:
     void fire();
 signals:
     void keyPress();
+public slots:
+    void notified();
 protected:
     void advance(int phase);
 };
