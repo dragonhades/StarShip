@@ -93,8 +93,7 @@ void TriangleShip::fire(){
         QPointF p2(2,40);
         QRectF rect(p1,p2);
         auto bullet = new QGraphicsEllipseItem(rect);
-        bullet->setPos(tri->scenePos());
-        bullet->setPos(bullet->scenePos().x()-head.dy()*2.5, bullet->scenePos().y()-head.dx()*2.5);
+        bullet->setPos(tri->scenePos().x()-head.dy()*2.5, tri->scenePos().y()-head.dx()*2.5);
         QPen pen;
         pen.setWidth(2);
         bullet->setPen(pen);
@@ -105,7 +104,7 @@ void TriangleShip::fire(){
         scene()->addItem(bullet);
         Bullet *b = new Bullet(bullet,head,view);
         scene()->addItem(b);
-        connect(this,SIGNAL(notifyBullet()),b,SLOT(keyPress()));
+        connect(this,SIGNAL(notifyObservers()),b,SLOT(keyPress()));
     }
 }
 
@@ -161,7 +160,6 @@ void TriangleShip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
     }
 }
 
-
 void TriangleShip::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
     case Qt::Key_W:
@@ -181,7 +179,7 @@ void TriangleShip::keyPressEvent(QKeyEvent *event){
         else {
             engineState = PAUSE;
             weaponState = PAUSE;
-            notifyBullet();
+            notifyObservers();
             keyPress();
         }
         break;
@@ -209,7 +207,7 @@ void TriangleShip::keyReleaseEvent(QKeyEvent *event){
 void TriangleShip::notified(){
     engineState = STOP;
     weaponState = STOP;
-    notifyBullet();
+    notifyObservers();
 }
 
 void TriangleShip::advance(int phase){

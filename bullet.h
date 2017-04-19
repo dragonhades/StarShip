@@ -19,6 +19,8 @@ class Bullet : public QObject, public QGraphicsSimpleTextItem {
     STATE state;
 public:
     Bullet(QAbstractGraphicsShapeItem *bullet, const QLineF &dir, QGraphicsView *view);
+    void setAngle(const qreal angle);
+    void setSpeed(const qreal speed);
 public slots:
     void keyPress();
 protected:

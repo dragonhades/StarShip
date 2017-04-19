@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QObject>
 #include <QPoint>
+#include <QRectF>
 #include <QDebug>
 #include <QTimer>
 #include <QPushButton>
@@ -16,6 +17,7 @@
 #include "triangleship.h"
 #include "constants.h"
 #include "Interface.h"
+#include "enemy.h"
 
 int main(int argc, char *argv[]){
 
@@ -72,6 +74,21 @@ int main(int argc, char *argv[]){
     QObject::connect(ship,SIGNAL(keyPress()),interface,SLOT(notifiedExit()));
     QObject::connect(interface,SIGNAL(notify()),ship,SLOT(notified()));
 
+    QPointF p1(-50,-50);
+    QPointF p2(50,50);
+    QRectF r(p1,p2);
+    auto round = new QGraphicsEllipseItem(r);
+    QPen pen;
+    pen.setWidth(2);
+    round->setPen(pen);
+    QBrush brush;
+    brush.setColor(Qt::black);
+    brush.setStyle(Qt::SolidPattern);
+    round->setBrush(brush);
+    scene->addItem(round);
+    Enemy *enemy= new Enemy(round, view);
+    scene->addItem(enemy);
+    QObject::connect(ship,SIGNAL(notifyObservers()),enemy,SLOT(notified()));
     //Exit * exit = new Exit(view);
     //scene->addWidget(exit);
 
