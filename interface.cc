@@ -4,8 +4,11 @@
 #include <QGraphicsSimpleTextItem>
 #include <QDebug>
 
+Interface::Interface(QGraphicsView *view):view{view}{
+    QGraphicsSimpleTextItem::setFlag(QGraphicsItem::ItemIsFocusable);
+}
+
 void Interface::keyPressEvent(QKeyEvent *event){
-    qDebug() <<42;
     switch(event->key()){
     case Qt::Key_Escape:
         notifiedExit();
@@ -17,7 +20,6 @@ void Interface::keyPressEvent(QKeyEvent *event){
 
 void Interface::notifiedExit(){
     if(!exit){
-        QGraphicsSimpleTextItem::setFlag(QGraphicsItem::ItemIsFocusable);
         QGraphicsSimpleTextItem::setFocus();
         exit = new Exit(view);
         scene()->addWidget(exit);
@@ -27,4 +29,8 @@ void Interface::notifiedExit(){
         exit=nullptr;
         notify();
     }
+}
+
+void Interface::advance(int phase){
+    if(!phase) return;
 }
