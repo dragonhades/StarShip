@@ -23,7 +23,6 @@ void Interface::notifiedExit(){
         QGraphicsSimpleTextItem::setFocus();
         exit = new Exit(view);
         scene()->addWidget(exit);
-        //exit->QWidget::setFocus();
     } else {
         delete exit;
         exit=nullptr;

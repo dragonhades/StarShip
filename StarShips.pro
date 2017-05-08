@@ -32,7 +32,8 @@ SOURCES += main.cc\
     bullet.cc \
     tools.cc \
     interface.cc \
-    enemy.cc
+    enemy.cc \
+    myview.cc
 
 HEADERS  += \
     exit.h \
@@ -43,6 +44,7 @@ HEADERS  += \
     bullet.h \
     tools.h \
     Interface.h \
-    enemy.h
+    enemy.h \
+    myview.h
 
 FORMS    += mainwindow.ui
