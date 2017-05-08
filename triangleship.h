@@ -31,11 +31,8 @@ class TriangleShip :public QWidget, public QGraphicsSimpleTextItem {
 public:
     TriangleShip(QGraphicsView *view);
     void addComponents(Triangle *triangle);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
     void keyReleaseEvent(QKeyEvent *event);
-    //bool event(QEvent *e);
     void increaseSpeed(const qreal &speed);
     void decreaseSpeed(const qreal &speed);
     void setMaxSpeed(const qreal &s);
@@ -45,6 +42,8 @@ signals:
     void notifyObservers();
 public slots:
     void notified();
+    void mousePressNotified();
+    void mouseReleaseNotified();
 protected:
     void advance(int phase);
 };

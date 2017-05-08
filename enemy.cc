@@ -68,7 +68,7 @@ void Enemy::fire(){
         qreal speed =2;
         qreal angle =0;
         qreal angle_acc = 360/bulletNum;
-        for(int i=0; i<bulletNum; i++){
+        for(unsigned int i=0; i<bulletNum; i++){
             auto bullet = new QGraphicsEllipseItem(rect);
             bullet->setPos(body->scenePos());
             bullet->setBrush(brush);

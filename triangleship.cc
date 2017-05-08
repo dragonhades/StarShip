@@ -121,44 +121,6 @@ void TriangleShip::decreaseSpeed(const qreal &speed){
 void TriangleShip::setMaxSpeed(const qreal &s){
     max_speed = s;
 }
-/*
-bool TriangleShip::event(QEvent *e){
-    if(e->type()==QEvent::KeyPress){
-        if(e->type()==Qt::Key_W){
-            engineState = SPEEDUP;
-        }
-        else if(e->type()==Qt::Key_S){
-            engineState = SLOWDOWN;
-        }
-        if(e->type()==Qt::Key_Space){
-            weaponState = FIRE;
-        }
-    }
-    if(e->type()==QEvent::KeyRelease){
-        if(e->type()==Qt::Key_W){
-            engineState = STOP;
-        }
-        else if(e->type()==Qt::Key_S){
-            engineState = STOP;
-        }
-        else if(e->type()==Qt::Key_Space){
-            weaponState = STOP;
-        }
-    }
-}
-*/
-
-void TriangleShip::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    if(event->button()==Qt::LeftButton){
-        weaponState = FIRE;
-    }
-}
-
-void TriangleShip::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    if(event->button()==Qt::LeftButton){
-        weaponState = STOP;
-    }
-}
 
 void TriangleShip::keyPressEvent(QKeyEvent *event){
     switch(event->key()){
@@ -208,6 +170,14 @@ void TriangleShip::notified(){
     engineState = STOP;
     weaponState = STOP;
     notifyObservers();
+}
+
+void TriangleShip::mousePressNotified(){
+    if(weaponState!=PAUSE)weaponState = FIRE;
+}
+
+void TriangleShip::mouseReleaseNotified(){
+    if(weaponState!=PAUSE)weaponState = STOP;
 }
 
 void TriangleShip::advance(int phase){

@@ -18,6 +18,7 @@
 #include "constants.h"
 #include "Interface.h"
 #include "enemy.h"
+#include "myview.h"
 
 int main(int argc, char *argv[]){
 
@@ -25,7 +26,9 @@ int main(int argc, char *argv[]){
     int desktopHeight=a.desktop()->screenGeometry().height();
     int desktopWidth=a.desktop()->screenGeometry().width();
     QGraphicsScene * scene = new QGraphicsScene();
-    QGraphicsView * view = new QGraphicsView(scene);
+    //QGraphicsView * view = new QGraphicsView(scene);
+    MyView * view = new MyView;
+    view->setScene(scene);
     view->showFullScreen();
     scene->setSceneRect(0,0,desktopWidth,desktopHeight);
     view->setFixedSize(desktopWidth,desktopHeight);
@@ -68,6 +71,7 @@ int main(int argc, char *argv[]){
     ship->addComponents(rightTri);
     ship->QGraphicsSimpleTextItem::setFlag(QGraphicsItem::ItemIsFocusable);
     ship->QGraphicsSimpleTextItem::setFocus();
+    view->connect_ship(ship);
 
     Interface *interface = new Interface(view);
     scene->addItem(interface);
